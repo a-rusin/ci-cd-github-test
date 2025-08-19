@@ -4,7 +4,7 @@ server {
 
       server_name aaruin.ru;
 
-      root /root/ci-cd-github-test/build/;
+      root ~/ci-cd-github-test/build;
       index index.html;
 
       location / {
