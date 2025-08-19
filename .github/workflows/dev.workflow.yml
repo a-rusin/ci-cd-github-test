@@ -1,45 +1,18 @@
-name: Development Workflow
+name: Deploy
 
-on: push
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  lint:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Install deps
-        run: npm ci
-      - name: Lint
-        run: npm run lint
-  test:
-    needs: [lint]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Install deps
-        run: npm ci
-      - name: Run test
-        run: npm run test
-  test-matrix:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        version: [16, 17, 18]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.version }}
-      - name: Install deps
-        run: npm ci
-  secret-test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkoout
-        uses: actions/checkout@v3
-      - name: Echo secret
-        run: echo ${{ secrets.SSH_PASS }}
+      - name: Write SSH keys
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H host.example.com > ~/.ssh/known_hosts
+      - name: Connect and pull
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "ls"
