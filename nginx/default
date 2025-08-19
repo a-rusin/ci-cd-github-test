@@ -2,7 +2,7 @@ server {
       listen 80;
       listen [::]:80;
 
-      server_name aaruin.ru;
+      server_name _;
 
       root ~/ci-cd-github-test/build;
       index index.html;
